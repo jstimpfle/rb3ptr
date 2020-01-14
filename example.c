@@ -53,13 +53,13 @@ static struct Foo *get_foo(struct rb3_head *head)
  * to write custom iteration code. (But you can still do that of course)
  *
  * The functions that you can hand to rb3_insert() or rb3_delete() will often
- * just compare two nodes, but in general they take just a single struct
- * rb3_head and an additional context parameter. You can see in main() that
- * we've put a struct Foo as an argument to rb3_insert() and rb3_delete().
- * That's why we can cast the context parameter back to that struct Foo here.
+ * compare two nodes, but in general they take a single struct rb3_head and an
+ * additional context argument, which can be whatever you like. You can see in
+ * main() that we hand a struct Foo to rb3_insert() and rb3_delete(). That's
+ * why we can cast the context argumentback to that struct Foo here.
  */
 
-static int compare_foo_heads(struct rb3_head *a, void *data)
+static int compare_foos(struct rb3_head *a, void *data)
 {
         struct Foo *x = get_foo(a);
         struct Foo *y = data;
@@ -90,7 +90,7 @@ int main(void)
 
         /* insert the random nodes. */
         for (i = 0; i < NUM_FOOS; i++)
-                rb3_insert(&tree, &foo[i].head, compare_foo_heads, &foo[i]);
+                rb3_insert(&tree, &foo[i].head, compare_foos, &foo[i]);
 
         /* Iterate over the tree using in-order traversal. We expect to print
          * a sorted sequence here due to the way we defined the ordering
@@ -104,7 +104,7 @@ int main(void)
          * found we should use the same (or at least a compatible) ordering
          * function. */
         for (i = 0; i < NUM_FOOS; i++)
-                rb3_delete(&tree, compare_foo_heads, &foo[i].head);
+                rb3_delete(&tree, compare_foos, &foo[i].head);
 
         free(foo);
 
